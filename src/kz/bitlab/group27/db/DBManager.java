@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 public class DBManager {
 
+    String text = "Ilyas";
+
     private static Connection connection;
 
     static {
