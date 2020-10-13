@@ -7,13 +7,15 @@ public class Users {
     private String password;
     private String fullName;
     private String picture;
+    private Cities city;
 
-    public Users(Long id, String email, String password, String fullName, String picture) {
+    public Users(Long id, String email, String password, String fullName, String picture, Cities city) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.fullName = fullName;
         this.picture = picture;
+        this.city = city;
     }
 
     public Users(){
@@ -58,5 +60,13 @@ public class Users {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public Cities getCity() {
+        return city;
+    }
+
+    public void setCity(Cities city) {
+        this.city = city;
     }
 }

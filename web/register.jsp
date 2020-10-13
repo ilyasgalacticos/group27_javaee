@@ -1,8 +1,11 @@
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="kz.bitlab.group27.db.Countries" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
     <head>
         <title>Title</title>
         <%@include file="head.jsp"%>
+        <script type="text/javascript" src="js/jquery-3.5.1.min.js"></script>
     </head>
     <body>
         <%@include file="navbar.jsp"%>
@@ -38,6 +41,19 @@
                     %>
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         Passwords are not same!
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <%
+                        }
+                    %>
+                    <%
+                        String cityError = request.getParameter("cityerror");
+                        if(cityError!=null){
+                    %>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        Choose correct city!
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -84,6 +100,33 @@
                             <input type="text" name="full_name" class="form-control" value="<%=(fullName!=null?fullName:"")%>" required>
                         </div>
                         <div class="form-group">
+                            <label>
+                                COUNTRY :
+                            </label>
+                            <select class="form-control" id = "country_id">
+                                <option value="0">Select Country</option>
+                                <%
+                                    ArrayList<Countries> countries = (ArrayList<Countries>)request.getAttribute("countries");
+                                    if(countries!=null){
+                                        for(Countries cnt : countries){
+                                %>
+                                    <option value="<%=cnt.getId()%>">
+                                        <%=cnt.getName()%>
+                                    </option>
+                                <%
+                                        }
+                                    }
+                                %>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                CITY :
+                            </label>
+                            <select class="form-control" id = "city_id" name="city_id">
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <button class="btn btn-success">SIGN UP</button>
                         </div>
                     </form>
@@ -91,4 +134,16 @@
             </div>
         </div>
     </body>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#country_id").change(function(){
+                cntId = $("#country_id").val();
+                $.post("/ajaxcities", {
+                    country_id : cntId
+                }, function(data){
+                    $("#city_id").html(data); // document.getElementById("city_id").innerHTML;
+                });
+            });
+        });
+    </script>
 </html>
