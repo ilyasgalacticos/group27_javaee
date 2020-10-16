@@ -124,6 +124,7 @@
                                 CITY :
                             </label>
                             <select class="form-control" id = "city_id" name="city_id">
+
                             </select>
                         </div>
                         <div class="form-group">
@@ -138,10 +139,15 @@
         $(document).ready(function () {
             $("#country_id").change(function(){
                 cntId = $("#country_id").val();
-                $.post("/ajaxcities", {
+                $.get("/ajaxcities", {
                     country_id : cntId
                 }, function(data){
-                    $("#city_id").html(data); // document.getElementById("city_id").innerHTML;
+                    citiesArray = JSON.parse(data);
+                    opts = "";
+                    for(i=0;i<citiesArray.length;i++){
+                        opts+="<option value = '"+citiesArray[i]["id"]+"'>"+citiesArray[i]["name"]+"</option>";
+                    }
+                    $("#city_id").html(opts);
                 });
             });
         });

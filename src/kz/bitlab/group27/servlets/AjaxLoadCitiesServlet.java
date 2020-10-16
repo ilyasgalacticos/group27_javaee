@@ -1,5 +1,6 @@
 package kz.bitlab.group27.servlets;
 
+import com.google.gson.Gson;
 import kz.bitlab.group27.db.Cities;
 import kz.bitlab.group27.db.DBManager;
 
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 
 @WebServlet(value = "/ajaxcities")
 public class AjaxLoadCitiesServlet extends HttpServlet {
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         Long id = Long.parseLong(request.getParameter("country_id"));
@@ -29,4 +31,22 @@ public class AjaxLoadCitiesServlet extends HttpServlet {
         }
 
     }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        Long id = Long.parseLong(request.getParameter("country_id"));
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+
+        ArrayList<Cities> cities = DBManager.getCitiesByCountryId(id);
+
+        if(cities!=null){
+
+            Gson gson = new Gson();
+            out.print(gson.toJson(cities));
+
+        }
+
+    }
+
 }
