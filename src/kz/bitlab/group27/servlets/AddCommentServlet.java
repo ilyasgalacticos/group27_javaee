@@ -4,6 +4,7 @@ import kz.bitlab.group27.db.Comments;
 import kz.bitlab.group27.db.DBManager;
 import kz.bitlab.group27.db.Hotels;
 import kz.bitlab.group27.db.Users;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -30,7 +31,7 @@ public class AddCommentServlet extends HttpServlet {
 
                 String commentText = request.getParameter("comment");
                 Comments comment = new Comments();
-                comment.setComment(commentText);
+                comment.setComment(StringEscapeUtils.escapeHtml(commentText));
                 comment.setUser(currentUser);
                 comment.setHotel(hotel);
 

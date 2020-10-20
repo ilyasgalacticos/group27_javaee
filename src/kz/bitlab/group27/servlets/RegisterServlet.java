@@ -4,6 +4,7 @@ import kz.bitlab.group27.db.Cities;
 import kz.bitlab.group27.db.Countries;
 import kz.bitlab.group27.db.DBManager;
 import kz.bitlab.group27.db.Users;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,6 +22,7 @@ public class RegisterServlet extends HttpServlet {
         String password = request.getParameter("password");
         String rePassword = request.getParameter("re_password");
         String fullName = request.getParameter("full_name");
+
         Long cityId = 0L;
         try {
             cityId = Long.parseLong(request.getParameter("city_id"));
@@ -44,6 +46,7 @@ public class RegisterServlet extends HttpServlet {
 
                 if(city!=null) {
 
+                    password = DigestUtils.sha1Hex(password);
                     Users newUser = new Users(null, email, password, fullName, "/images/default_user.png", city);
                     DBManager.addUser(newUser);
 

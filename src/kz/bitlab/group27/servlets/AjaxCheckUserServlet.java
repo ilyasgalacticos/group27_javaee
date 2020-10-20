@@ -3,6 +3,7 @@ package kz.bitlab.group27.servlets;
 import com.google.gson.Gson;
 import kz.bitlab.group27.db.DBManager;
 import kz.bitlab.group27.db.Users;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -36,7 +37,7 @@ public class AjaxCheckUserServlet extends HttpServlet {
 
             message = "Incorrect password for user \""+email+"\" !!!";
 
-            if(checkUser.getPassword().equals(password)){
+            if(checkUser.getPassword().equals(DigestUtils.sha1Hex(password))){
 
                 message = "Okay";
                 status = "ok";
