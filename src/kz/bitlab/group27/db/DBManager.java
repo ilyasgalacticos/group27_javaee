@@ -423,4 +423,71 @@ public class DBManager {
         return city;
     }
 
+    public static ArrayList<Hotels> searchHotels(String name, int priceFrom, int priceTo, int starsFrom, int starsTo){
+
+        ArrayList<Hotels> hotels = new ArrayList<>();
+
+        try{
+
+            String priceFromQuery = "";
+            String priceToQuery = "";
+            String starsFromQuery = "";
+            String starsToQuery = "";
+
+            if(priceFrom>=0){
+                priceFromQuery = " AND h.price >= " + priceFrom;
+            }
+
+            if(priceTo>=0){
+                priceToQuery = " AND h.price <= " + priceTo;
+            }
+
+            if(starsFrom>=0){
+                starsFromQuery = " AND h.stars >= " + starsFrom;
+            }
+
+            if(starsTo>=0){
+                starsToQuery = " AND h.stars <= " + starsTo;
+            }
+
+            String sqlQuery = "SELECT h.id, h.name, h.description, h.added_date, h.price, h.stars, h.author_id, u.full_name, u.picture " +
+                    "FROM hotels h " +
+                    "INNER JOIN users u ON u.id = h.author_id " +
+                    "WHERE h.name LIKE ? " + priceFromQuery + priceToQuery + starsFromQuery + starsToQuery + " "+
+                    "ORDER BY h.price ASC ";
+
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            statement.setString(1, "%"+name+"%");
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while(resultSet.next()){
+                hotels.add(
+                        new Hotels(
+                                resultSet.getLong("id"),
+                                resultSet.getString("name"),
+                                new Users(
+                                        resultSet.getLong("author_id"),
+                                        null, null,
+                                        resultSet.getString("full_name"),
+                                        resultSet.getString("picture"),
+                                        null
+                                ),
+                                resultSet.getString("description"),
+                                resultSet.getInt("stars"),
+                                resultSet.getInt("price"),
+                                resultSet.getTimestamp("added_date")
+                        )
+                );
+            }
+
+            statement.close();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return hotels;
+    }
+
 }
