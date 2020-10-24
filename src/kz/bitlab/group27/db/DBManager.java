@@ -181,7 +181,7 @@ public class DBManager {
         try{
 
             PreparedStatement statement = connection.prepareStatement("" +
-                    "SELECT h.id, h.name, h.description, h.added_date, h.price, h.stars, h.author_id, u.full_name, u.picture " +
+                    "SELECT h.id, h.name, h.description, h.added_date, h.price, h.stars, h.author_id, h.likes, u.full_name, u.picture " +
                     "FROM hotels h " +
                     "INNER JOIN users u ON u.id = h.author_id " +
                     "ORDER BY h.price ASC");
@@ -204,7 +204,8 @@ public class DBManager {
                                 resultSet.getString("description"),
                                 resultSet.getInt("stars"),
                                 resultSet.getInt("price"),
-                                resultSet.getTimestamp("added_date")
+                                resultSet.getTimestamp("added_date"),
+                                resultSet.getInt("likes")
                         )
                 );
             }
@@ -224,7 +225,7 @@ public class DBManager {
         try{
 
             PreparedStatement statement = connection.prepareStatement("" +
-                    "SELECT h.id, h.name, h.description, h.added_date, h.price, h.stars, h.author_id, u.full_name, u.picture " +
+                    "SELECT h.id, h.name, h.description, h.added_date, h.price, h.stars, h.author_id, h.likes, u.full_name, u.picture " +
                     "FROM hotels h " +
                     "INNER JOIN users u ON u.id = h.author_id " +
                     "WHERE h.id = ? ");
@@ -247,7 +248,8 @@ public class DBManager {
                             resultSet.getString("description"),
                             resultSet.getInt("stars"),
                             resultSet.getInt("price"),
-                            resultSet.getTimestamp("added_date")
+                            resultSet.getTimestamp("added_date"),
+                            resultSet.getInt("likes")
                   );
             }
 
@@ -488,6 +490,87 @@ public class DBManager {
         }
 
         return hotels;
+    }
+
+    public static int toLikeHotel(Long hotelId, Long userId){
+
+        int likes = 0;
+        boolean exists = false;
+
+        try{
+
+            PreparedStatement statement1 = connection.prepareStatement("" +
+                    "SELECT * FROM likes WHERE hotel_id = ? AND user_id = ?");
+
+            statement1.setLong(1, hotelId);
+            statement1.setLong(2, userId);
+
+            ResultSet resultSet1 = statement1.executeQuery();
+
+            if(resultSet1.next()){
+                exists = true;
+            }
+
+            statement1.close();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        try {
+
+            String sqlText = "INSERT INTO likes(id, hotel_id, user_id) VALUES(NULL, ?, ?)";
+
+            if(exists) {
+                sqlText = "DELETE FROM likes WHERE hotel_id = ? AND user_id = ?";
+            }
+
+            PreparedStatement statement2 = connection.prepareStatement(sqlText);
+
+            statement2.setLong(1, hotelId);
+            statement2.setLong(2, userId);
+
+            statement2.executeUpdate();
+            statement2.close();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        try{
+
+            PreparedStatement statement3 = connection.prepareStatement("" +
+                    "SELECT COUNT(*) likeCount FROM likes WHERE hotel_id = ?");
+
+            statement3.setLong(1, hotelId);
+            ResultSet resultSet3 = statement3.executeQuery();
+
+            if(resultSet3.next()){
+                likes = resultSet3.getInt("likeCount");
+            }
+
+            statement3.close();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        try{
+
+            PreparedStatement statement4 = connection.prepareStatement("" +
+                    "UPDATE hotels SET likes = ? WHERE id = ?");
+            statement4.setInt(1, likes);
+            statement4.setLong(2, hotelId);
+
+            statement4.executeUpdate();
+            statement4.close();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return likes;
+
     }
 
 }

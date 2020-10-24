@@ -42,6 +42,11 @@
                             <b>
                                 Added by <%=h.getAuthor().getFullName()%> at <%=format.format(h.getAddedDate())%>
                             </b>
+                            <hr class="mt-4">
+                            <p>
+                                <span style="color:black; font-size: 22px;">&hearts;</span>
+                                <span><%=h.getLikes()%></span> likes
+                            </p>
                             <%--
                                  <img src="<%=h.getAuthor().getPicture()%>" height="50px;" style="border-radius: 50%;">
                             --%>

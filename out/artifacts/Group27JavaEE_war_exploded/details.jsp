@@ -8,6 +8,7 @@
     <head>
         <title>Title</title>
         <%@include file="head.jsp"%>
+        <script type="text/javascript" src="js/jquery-3.5.1.min.js"></script>
         <style>
             img{
                 max-width: 100%;
@@ -45,6 +46,35 @@
                             <p>
                                 <%=hotel.getDescription()%>
                             </p>
+                            <%
+                                if(currentUser!=null){
+                            %>
+                                <p>
+                                    <a href="JavaScript:void(0)" style="color:black; font-size: 22px; text-decoration: none;" onclick="toLike()">&hearts;</a>
+                                    <span id = "like_cnt_id"><%=hotel.getLikes()%></span> likes
+                                </p>
+                                <script type="text/javascript">
+                                    function toLike() {
+                                        $.post("/ajaxlike", {
+                                            hotel_id : <%=hotel.getId()%>
+                                        }, function (response) {
+                                            if(response!=-1){
+                                                $("#like_cnt_id").html(response);
+                                            }
+                                        });
+                                    }
+                                </script>
+
+                            <%
+                                }else{
+                            %>
+                                <p>
+                                    <span style="color:black; font-size: 22px;">&hearts;</span>
+                                    <span><%=hotel.getLikes()%></span> likes
+                                </p>
+                            <%
+                                }
+                            %>
                         </div>
                         <%
                             if(currentUser!=null){
